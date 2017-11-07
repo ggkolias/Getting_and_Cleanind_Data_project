@@ -40,7 +40,7 @@ testData <- cbind(TestSubject, TestSet, TestLabels)
 
 allData <- rbind(trainData, testData)
 
-colnames(allData) <- c("Subject", features[, 2], "Labels")
+colnames(allData) <- c("Subject", Features[, 2], "Labels")
 
 ####2. Extract only the measurements on the mean and standard deviation for each measurement####
 
