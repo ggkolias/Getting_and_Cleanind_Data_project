@@ -10,7 +10,7 @@ if (!file.exists(dataset)){
 }
 dataset <- "UCI HAR Dataset"
 if (!file.exists(dataset)){
-        unzip(dataset)
+        unzip(datasetZip)
 }
 
 ####Read data#####
@@ -30,7 +30,8 @@ TestLabels <- read.table(file.path(dataset, "test", "Y_test.txt"))
 ####Read Features & Activity Labels####
 
 Features <- read.table(file.path(dataset, "features.txt"))
-ActivityLabels <- read.table(file.path(dataset, "activity_labels.txt", colnames = c("activityID" ,"activityLabel")))
+ActivityLabels <- read.table(file.path(dataset, "activity_labels.txt"))
+colnames(ActivityLabels) = c("activityID" ,"activityLabel")
 
 ####1. Merge the training and the test sets to create one data set####
 
@@ -50,13 +51,13 @@ allData <- allData[, columns_M_STD]
 
 ####3. Use descriptive activity names to name the activities in the data set####
 
-allData$Labels <- factor(allData$Labels, levels = Labels[, 1], labels = Labels[, 2])
+allData$Labels <- factor(allData$Labels, levels = ActivityLabels[, 1], labels = ActivityLabels[, 2])
 
 ####4. Appropriately label the data set with descriptive variable names####
 
 allDataColumns <- colnames(allData)
 
-allData <- gsub("[\\(\\)-]", "", allDataColumns)
+allDataColumns <- gsub("[\\(\\)-]", "", allDataColumns)
 
 colnames(allData) <- allDataColumns
 
@@ -65,6 +66,6 @@ colnames(allData) <- allDataColumns
 
 allDataAverage <- allData %>%
         group_by(Subject, Labels) %>%
-        summarise_each(funs(mean))
+        summarise_all(funs(mean))
 
 write.table(allDataAverage, "tidyDataSet.txt", row.names = FALSE, quote = FALSE)
